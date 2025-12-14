@@ -1,49 +1,39 @@
+@Builder
+export function SecondBuilder(){
+  Second()
+}
 @Entry
 @Component
 struct Second{
-     @State message:string ='Hi there';
-  build() {
-    Row() {
-      Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
-        Button() {
-          Text('Back')
-            .newExtend()
-        }
-        .type(ButtonType.Capsule)
-        .margin({
-          top: 20
-        })
-        .backgroundColor('#0D9FFB')
-        .width('40%')
-        .height('5%')
-      }
-      // 返回按钮绑定onClick事件，单击按钮时返回到第一页
-      .onClick(() => {
-        console.info(`Succeeded in clicking the 'Back' button.`)
-        // 获取UIContext
-        let uiContext: UIContext = this.getUIContext();
-        let router = uiContext.getRouter();
-        try {
-          // 返回第一页
-          router.back()
-          console.info('Succeeded in returning to the first page.')
-        } catch (err) {
-          let code = (err as BusinessError).code;
-          let message = (err as BusinessError).message;
-          console.error(`Failed to return to the first page. Code is ${code}, message is ${message}`)
-        }
-      })
-      .width('100%')
+  @State receivedId: string = '';
+     pathStack:NavPathStack = new NavPathStack()
+  aboutToAppear() {
+    // 通过路由上下文获取传递的参数
+    const params = this.getUIContext().getRouter().getParams();
+    if (params && params) {
+      this.receivedId = params as string;  // 类型断言确保类型安全
     }
-    .height('100%')
+  }
+  build() {
+    NavDestination(){
+       Tabs({barPosition: BarPosition.End}){
+         TabContent(){
+           Column(){
+             Text("姓名"+"name")
+               .fontSize(23)
+               .fontWeight(FontWeight.Bolder)
+               .margin({bottom:12})
+             Text("教师号"+"ID")
+             Text("学院"+"college")
+           }
+         }.tabBar('我的')
+         TabContent(){Text("违规记录内容")}.tabBar('违规记录')
+         TabContent(){Text("申诉处理内容")}.tabBar('申诉处理')
+       }
+      }
+      .title("教师界面")
+      .hideBackButton(true)
   }
 }
 
-@Extend(Text)
-function newExtend() {
-  .fontSize(30)
-  .fontWeight(FontWeight.Bold)
-}
+
